@@ -1,7 +1,4 @@
-
-/*********************************************************************************/
 //On importe nos package
-
 const http = require('http'); //depuis node
 const app = require('./app'); //notre application 
 

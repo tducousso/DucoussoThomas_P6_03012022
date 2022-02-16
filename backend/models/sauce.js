@@ -1,12 +1,8 @@
-/*********************************************************************************/
 //On importe ce dont nous avons besoin.
-
 const mongoose = require('mongoose')
 
-/*********************************************************************************/
 //Notre Schéma Sauce
 
-//Création du modèle grâce a la methode schema puis on l'exporte pour etre utilisé dans expresse
 const sauceSchema = mongoose.Schema({
   userId: { type: String, required: true },
   name: { type: String, required: true },

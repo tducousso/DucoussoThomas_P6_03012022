@@ -1,4 +1,3 @@
-/*********************************************************************************/
 //On importe ce dont nous avons besoin.
 
 const Sauce = require('../models/sauce') //Le schéma de nos sauces
@@ -8,22 +7,28 @@ const sauce = require('../models/sauce')
 /*********************************************************************************/
 //Nos routes "Get"
 
-exports.getAllSauces = (req, res, next) => { //Pour obtenir toutes nos sauces 
+exports.getAllSauces = (req, res, next) => { 
     Sauce.find() //on utilise .find de mangoose pour chercher sur la database nos Sauces.
         .then(sauces => res.status(200).json(sauces)) //Ensuite, on renvoie une réponse positive avec les dites sauces.
-        .catch(err => res.status(500).json({err}))  
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({ error });
+          }); 
 }
 
-exports.getOneSauce = (req, res, next) => { //Pour obtenir une seule sauce    
+exports.getOneSauce = (req, res, next) => {    
     Sauce.findOne({ _id: req.params.id}) //On cherche la sauce par son id.
         .then(sauce => res.status(200).json(sauce)) //Ensuite, on renvoie une réponse positive avec la dite sauce.
-        .catch(err => res.status(500).json({err}))  
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({ error });
+          }); 
 }
 
 /*********************************************************************************/
 //Nos routes post.
 
-exports.createSauce = (req, res, next) => { //Pour créer une sauce.
+exports.createSauce = (req, res, next) => { 
     const sauceObject = JSON.parse(req.body.sauce) //On récupère sous format JSON les données sauce du Frontend
     delete sauceObject._id //on enlêve l'ID.
     const sauce = new Sauce({ //On créer un nouvelle objet Sauce
@@ -35,11 +40,14 @@ exports.createSauce = (req, res, next) => { //Pour créer une sauce.
         usersdisLiked: [' '],
     }); 
     sauce.save() //On sauvegarde cette sauce sur la database avec save.
-        .then(() => res.status(200).json({message: 'Sauce sauvegardée'})) //On envoie une réponse positive 200.
-        .catch(error => res.status(400).json({ error })) 
+        .then(() => res.status(200).json({message: 'Sauce sauvegardée'})) 
+        .catch(error => {
+      console.log(error);
+      res.status(500).json({ error });
+    }); 
 }
 
-exports.likesDislikes = (req, res, next) => {  //Pour gêrer les likes et les dislikes.
+exports.likesDislikes = (req, res, next) => {  
     if (req.body.like === 1) { //Comme indiquer sur les instructions, une valeur de "1" équivaux a un like.
         Sauce.updateOne( //On utilise 'UpdateOne()' pour mettre à jour les likes notre sauce.
             {_id: req.params.id}, //La sauce qu'on update est définie par son ID
@@ -80,7 +88,7 @@ exports.likesDislikes = (req, res, next) => {  //Pour gêrer les likes et les di
 /*********************************************************************************/
 //Nos routes put
 
-exports.modifySauce = function (req, res, next) { //Pour modifier une sauce
+exports.modifySauce = function (req, res, next) { 
     const sauceObject = req.file? //On vérifie si il y a une nouvelle image ou pas.
     { //Si il y a une image 
         ...JSON.parse(req.body.sauce), //On récupère au format Json les nouvelles données
@@ -88,8 +96,8 @@ exports.modifySauce = function (req, res, next) { //Pour modifier une sauce
     }  
     : {...req.body} //Sinon on récupère simplement les nouvelles données
     sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id}) //On update ensuite la sauce dans notre database (par rapport à son ID)
-    .then(() => res.status(200).json({Message: 'Sauce modifiée'})) //On envoie une réponse positive 200
-    .catch(error => res.status(400).json({ error })) //Sinon, un message d'érreur
+    .then(() => res.status(200).json({Message: 'Sauce modifiée'})) 
+    .catch(error => res.status(400).json({ error })) 
 }
 
 /*********************************************************************************/
@@ -101,8 +109,8 @@ exports.deleteSauce = (req, res, next) => { //On supprime une sauce
             const filename = sauce.imageUrl.split('/images/')[1] //on split l'Url de notre image pour obtenir le nom fichier seulement
             fs.unlink(`images/${filename}`, () => { //via ce nom, on supprime l'image de la sauce en question.
                 sauce.deleteOne({_id: req.params.id}) //Ensuite, on supprime la sauce avec deleteOne de MangoDB
-                    .then(() => res.status(200).json({message: 'Sauce supprimée'})) //On renvoie une réponse positive 200
-                    .catch(error => res.status(400).json({error: error})) //Sinon, un message d'érreur
+                    .then(() => res.status(200).json({message: 'Sauce supprimée'})) 
+                    .catch(error => res.status(400).json({error: error})) 
             })
         })
 }

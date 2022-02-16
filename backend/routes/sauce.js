@@ -1,4 +1,3 @@
-/*********************************************************************************/
 //On importe ce dont nous avons besoin et on créer notre router
 
 const express = require('express')
@@ -8,8 +7,8 @@ const multer = require('../middleware/multer-config')
 const sauceCtrl = require('../controllers/sauce')
 
 /*********************************************************************************/
-
 //Chaque route aura "Auth" qui permet d'authentifier l'utilisateur sur chaque demandes.
+
 router.get('/', auth, sauceCtrl.getAllSauces) 
 router.get('/:id', auth, sauceCtrl.getOneSauce);
 router.post('/', auth, multer, sauceCtrl.createSauce); //On ajoute également multer après Auth ici, pour gêrer les images.
